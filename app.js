@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const Redis = require('ioredis');
 const rateLimit = require('express-rate-limit');
-const RedisStore = require('rate-limit-redis'); // ✅ Correct for version 1.7.0
+const RedisStore = require('rate-limit-redis'); 
 const { Queue } = require('bullmq');
 const { db } = require('./db');
 
@@ -23,7 +23,7 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
-// ✅ Rate limiting per account
+
 app.use('/server/incoming_data', rateLimit({
   store: new RedisStore({
     sendCommand: (...args) => redis.call(...args)
@@ -34,7 +34,7 @@ app.use('/server/incoming_data', rateLimit({
   message: { success: false, message: 'Rate limit exceeded' }
 }));
 
-// ✅ Signup route
+
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
@@ -53,7 +53,7 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-// ✅ Login route
+
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
@@ -66,7 +66,7 @@ app.post('/login', async (req, res) => {
   res.json({ success: true, token });
 });
 
-// ✅ Optional JWT middleware
+
 function auth(req, res, next) {
   const header = req.headers.authorization;
   if (!header) return res.status(401).json({ success: false, message: 'Missing token' });
@@ -79,7 +79,7 @@ function auth(req, res, next) {
   }
 }
 
-// ✅ Webhook endpoint
+
 app.post('/server/incoming_data', (req, res) => {
   const token = req.headers['cl-x-token'];
   const eventId = req.headers['cl-x-event-id'];
@@ -111,7 +111,7 @@ app.post('/server/incoming_data', (req, res) => {
 
   res.json({ success: true, message: 'Data Received' });
 });
-// Setup API: Create account and destination
+
 app.post('/setup/account-with-destination', auth, (req, res) => {
   const {
     account_id,
@@ -144,7 +144,7 @@ app.post('/setup/account-with-destination', auth, (req, res) => {
   }
 });
 
-// ✅ Start server
+
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
