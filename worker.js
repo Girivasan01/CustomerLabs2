@@ -1,4 +1,4 @@
-// worker.js
+
 const { Worker } = require('bullmq');
 const axios = require('axios');
 const Redis = require('ioredis');
